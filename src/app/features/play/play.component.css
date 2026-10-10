@@ -2,6 +2,55 @@
   margin-bottom: 0.8rem;
 }
 
+.board {
+  --size: 4;
+  display: grid;
+  grid-template-columns: repeat(var(--size), minmax(0, 1fr));
+  width: min(100%, 28rem);
+  aspect-ratio: 1;
+  margin: 0 0 1rem;
+  border: 2px solid #3a2618;
+  background: #2a1c12;
+}
+
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.05rem;
+  min-width: 0;
+  padding: 0.1rem;
+  font-size: clamp(0.75rem, 3.6vw, 1.35rem);
+  line-height: 1;
+  background: #3d2c20;
+  box-shadow: inset 0 0 0 1px rgba(42, 28, 18, 0.55);
+}
+
+.square.light {
+  background: #8d7a58;
+}
+
+.square.dark {
+  background: #3d2c20;
+}
+
+.square.light.visited {
+  background: #e6d3a3;
+}
+
+.square.dark.visited {
+  background: #6e4b32;
+}
+
+.square.here {
+  box-shadow: inset 0 0 0 3px #c4a35a;
+}
+
+.icon {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
 textarea {
   display: block;
   width: 100%;

@@ -5,6 +5,24 @@
     {{ session.hasGold() ? 'sí' : 'no' }} · Acciones: {{ session.actions() }}
   </p>
 
+  <div class="board" [style.--size]="session.size()" role="grid" aria-label="Cueva">
+    @for (cell of session.cells(); track cell.id) {
+      <div
+        class="square"
+        [class.light]="cell.light"
+        [class.dark]="!cell.light"
+        [class.here]="cell.here"
+        [class.visited]="cell.visited"
+        role="gridcell"
+        [attr.aria-label]="cell.label"
+      >
+        @for (icon of cell.icons; track $index) {
+          <span class="icon">{{ icon }}</span>
+        }
+      </div>
+    }
+  </div>
+
   <div class="commands">
     <button type="button" (click)="act('forward')" [disabled]="!session.playing()">Avanzar</button>
     <button type="button" (click)="act('left')" [disabled]="!session.playing()">Izquierda</button>

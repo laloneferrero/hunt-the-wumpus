@@ -114,7 +114,66 @@ describe('PlayComponent', () => {
     expect(session.hasGold()).toBeTrue();
     expect(session.status()).toBe('won');
   });
+
+  it('shows breeze and stench on the start square and hides unseen hazards', () => {
+    const fixture = startCave({
+      pits: [{ row: 0, col: 1 }],
+      wumpus: { row: 1, col: 0 },
+      gold: { row: 3, col: 3 },
+    });
+
+    const board = boardText(fixture.nativeElement);
+    expect(board).toContain('💨');
+    expect(board).toContain('🤢');
+    expect(board).not.toContain('👽');
+    expect(board).not.toContain('🕳️');
+    expect(fixture.nativeElement.querySelectorAll('.square').length).toBe(16);
+  });
+
+  it('shows the pit emoji only after falling in', () => {
+    const fixture = startCave({
+      pits: [{ row: 0, col: 1 }],
+      wumpus: { row: 3, col: 3 },
+      gold: { row: 3, col: 2 },
+    });
+
+    expect(boardText(fixture.nativeElement)).not.toContain('🕳️');
+    clickButton(fixture.nativeElement, 'Avanzar');
+    fixture.detectChanges();
+    expect(boardText(fixture.nativeElement)).toContain('🕳️');
+  });
+
+  it('shows the alien emoji when the hunter finds the wumpus', () => {
+    const fixture = startCave({
+      pits: [{ row: 3, col: 3 }],
+      wumpus: { row: 1, col: 0 },
+      gold: { row: 3, col: 2 },
+    });
+
+    expect(boardText(fixture.nativeElement)).not.toContain('👽');
+    clickButton(fixture.nativeElement, 'Izquierda');
+    clickButton(fixture.nativeElement, 'Avanzar');
+    fixture.detectChanges();
+    expect(boardText(fixture.nativeElement)).toContain('👽');
+  });
 });
+
+function startCave(layout: {
+  pits: { row: number; col: number }[];
+  wumpus: { row: number; col: number };
+  gold: { row: number; col: number };
+}) {
+  const session = TestBed.inject(GameSessionService);
+  session.load(
+    new GameEngine({
+      arrows: 1,
+      board: createFixedBoard({ size: 4, ...layout }),
+    }),
+  );
+  const fixture = TestBed.createComponent(PlayComponent);
+  fixture.detectChanges();
+  return fixture;
+}
 
 function button(root: HTMLElement, label: string): HTMLButtonElement {
   const found = [...root.querySelectorAll('button')].find(
@@ -132,4 +191,8 @@ function clickButton(root: HTMLElement, label: string): void {
 
 function logText(root: HTMLElement): string {
   return (root.querySelector('textarea') as HTMLTextAreaElement).value;
+}
+
+function boardText(root: HTMLElement): string {
+  return root.querySelector('.board')?.textContent ?? '';
 }

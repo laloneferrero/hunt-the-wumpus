@@ -1,5 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Rng } from './game/board';
+import { buildBoardView, visitKey } from './game/board-view';
 import { directionLabel } from './game/direction';
 import { GameEngine } from './game/game-engine';
 import { describePercepts, describeResult } from './game/messages';
@@ -16,6 +17,8 @@ const COMMAND_LABELS: Record<Command, string> = {
 @Injectable({ providedIn: 'root' })
 export class GameSessionService {
   private engine: GameEngine | null = null;
+  private readonly revision = signal(0);
+  private readonly visited = signal<ReadonlySet<string>>(new Set());
 
   readonly log = signal('');
   readonly status = signal<GameStatus | null>(null);
@@ -25,6 +28,23 @@ export class GameSessionService {
   readonly actions = signal(0);
   readonly active = signal(false);
   readonly playing = computed(() => this.status() === 'playing');
+  readonly size = computed(() => {
+    this.revision();
+    return this.engine?.board.size ?? 0;
+  });
+  readonly cells = computed(() => {
+    this.revision();
+    const engine = this.engine;
+    if (!engine) {
+      return [];
+    }
+    return buildBoardView({
+      board: engine.board,
+      position: engine.position,
+      facing: engine.facing,
+      visited: this.visited(),
+    });
+  });
   readonly facingLabel = computed(() => {
     const facing = this.facing();
     return facing ? directionLabel(facing) : '—';
@@ -36,6 +56,7 @@ export class GameSessionService {
 
   load(engine: GameEngine): void {
     this.engine = engine;
+    this.visited.set(new Set());
     this.sync();
     const intro = `Entras en la cueva por la casilla de salida, mirando al ${directionLabel(engine.facing)}.`;
     this.log.set([intro, describePercepts(engine.lastPercepts)].join('\n'));
@@ -54,6 +75,7 @@ export class GameSessionService {
 
   clear(): void {
     this.engine = null;
+    this.visited.set(new Set());
     this.log.set('');
     this.status.set(null);
     this.facing.set(null);
@@ -61,6 +83,7 @@ export class GameSessionService {
     this.hasGold.set(false);
     this.actions.set(0);
     this.active.set(false);
+    this.revision.update((current) => current + 1);
   }
 
   private dispatch(engine: GameEngine, command: Command) {
@@ -89,5 +112,15 @@ export class GameSessionService {
     this.hasGold.set(engine.hasGold);
     this.actions.set(engine.actions);
     this.active.set(true);
+    this.visited.update((current) => {
+      const key = visitKey(engine.position);
+      if (current.has(key)) {
+        return current;
+      }
+      const next = new Set(current);
+      next.add(key);
+      return next;
+    });
+    this.revision.update((current) => current + 1);
   }
 }
