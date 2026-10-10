@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  background: #f4f1ea;
+  color: #1c1915;
+}
+
+main {
+  max-width: 40rem;
+  margin: 2rem auto;
+  padding: 0 1rem 2rem;
+}
+
+button {
+  font: inherit;
+  padding: 0.4rem 0.8rem;
+  margin: 0 0.4rem 0.4rem 0;
+}
+
+input,
+textarea {
+  font: inherit;
+}
+
+.error {
+  color: #8a1f1f;
+}

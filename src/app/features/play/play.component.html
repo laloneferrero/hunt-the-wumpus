@@ -1,0 +1,20 @@
+<section>
+  <h1>Hunt the Wumpus</h1>
+  <p class="status">
+    Orientación: {{ session.facingLabel() }} · Flechas: {{ session.arrows() }} · Oro:
+    {{ session.hasGold() ? 'sí' : 'no' }} · Acciones: {{ session.actions() }}
+  </p>
+
+  <div class="commands">
+    <button type="button" (click)="act('forward')" [disabled]="!session.playing()">Avanzar</button>
+    <button type="button" (click)="act('left')" [disabled]="!session.playing()">Izquierda</button>
+    <button type="button" (click)="act('right')" [disabled]="!session.playing()">Derecha</button>
+    <button type="button" (click)="act('shoot')" [disabled]="!session.playing()">Disparar</button>
+    <button type="button" (click)="act('climb')" [disabled]="!session.playing()">Salir</button>
+  </div>
+
+  <label for="log">Salida del sistema</label>
+  <textarea id="log" #logBox readonly [value]="session.log()"></textarea>
+
+  <button type="button" (click)="newGame()">Nueva partida</button>
+</section>

@@ -1,0 +1,12 @@
+label {
+  display: block;
+  margin-top: 0.8rem;
+}
+
+input {
+  width: 8rem;
+}
+
+button {
+  margin-top: 1rem;
+}

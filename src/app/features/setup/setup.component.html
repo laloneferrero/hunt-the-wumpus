@@ -1,0 +1,20 @@
+<section>
+  <h1>Hunt the Wumpus</h1>
+  <p>Configura la cueva y entra a buscar el lingote de oro.</p>
+  <form [formGroup]="form" (ngSubmit)="start()">
+    <label for="size">Tamaño del tablero (n)</label>
+    <input id="size" type="number" formControlName="size" min="3" max="12" step="1" />
+
+    <label for="pits">Número de pozos</label>
+    <input id="pits" type="number" formControlName="pits" min="0" step="1" />
+
+    <label for="arrows">Flechas</label>
+    <input id="arrows" type="number" formControlName="arrows" min="0" step="1" />
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+
+    <button type="submit">Comenzar partida</button>
+  </form>
+</section>
