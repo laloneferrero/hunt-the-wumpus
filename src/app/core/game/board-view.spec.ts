@@ -23,7 +23,8 @@ describe('buildBoardView', () => {
     );
 
     const start = cells.find((cell) => cell.row === 0 && cell.col === 0);
-    expect(start?.icons).toEqual(['➡️', '💨', '🤢']);
+    expect(start?.facing).toBe('E');
+    expect(start?.icons).toEqual(['💨', '🤢']);
     expect(cells.some((cell) => cell.icons.includes('👽'))).toBeFalse();
     expect(cells.some((cell) => cell.icons.includes('🕳️'))).toBeFalse();
   });
@@ -44,8 +45,9 @@ describe('buildBoardView', () => {
 
     const start = cells.find((cell) => cell.row === 0 && cell.col === 0);
     const body = cells.find((cell) => cell.row === 1 && cell.col === 0);
+    expect(start?.facing).toBeNull();
     expect(start?.icons).toEqual(['💨', '🚪']);
-    expect(body?.icons).toContain('⬆️');
+    expect(body?.facing).toBe('N');
     expect(body?.icons).toContain('👽');
   });
 });

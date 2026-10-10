@@ -10,16 +10,10 @@ export interface BoardCellView {
   light: boolean;
   visited: boolean;
   here: boolean;
+  facing: Direction | null;
   icons: string[];
   label: string;
 }
-
-const FACING_ICON: Record<Direction, string> = {
-  N: '⬆️',
-  E: '➡️',
-  S: '⬇️',
-  W: '⬅️',
-};
 
 const BREEZE = '💨';
 const STENCH = '🤢';
@@ -43,7 +37,7 @@ export function buildBoardView(options: {
       const position = { row, col };
       const here = samePosition(position, options.position);
       const visited = options.visited.has(visitKey(position));
-      const icons = iconsFor(options.board, position, options.facing, visited, here);
+      const icons = iconsFor(options.board, position, visited, here);
       cells.push({
         id: visitKey(position),
         row,
@@ -51,6 +45,7 @@ export function buildBoardView(options: {
         light: (row + col) % 2 === 0,
         visited,
         here,
+        facing: here ? options.facing : null,
         icons,
         label: cellLabel(position, options.facing, visited, here, icons),
       });
@@ -59,22 +54,12 @@ export function buildBoardView(options: {
   return cells;
 }
 
-function iconsFor(
-  board: Board,
-  position: Position,
-  facing: Direction,
-  visited: boolean,
-  here: boolean,
-): string[] {
+function iconsFor(board: Board, position: Position, visited: boolean, here: boolean): string[] {
   if (!visited) {
     return [];
   }
 
   const icons: string[] = [];
-  if (here) {
-    icons.push(FACING_ICON[facing]);
-  }
-
   const cell = cellAt(board, position);
   if (cell.pit) {
     icons.push(PIT);

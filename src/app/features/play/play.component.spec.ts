@@ -128,6 +128,11 @@ describe('PlayComponent', () => {
     expect(board).not.toContain('👽');
     expect(board).not.toContain('🕳️');
     expect(fixture.nativeElement.querySelectorAll('.square').length).toBe(16);
+    expect(fixture.nativeElement.querySelector('.hunter')?.getAttribute('data-facing')).toBe('E');
+
+    clickButton(fixture.nativeElement, 'Izquierda');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.hunter')?.getAttribute('data-facing')).toBe('N');
   });
 
   it('shows the pit emoji only after falling in', () => {

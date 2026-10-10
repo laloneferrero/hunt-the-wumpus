@@ -16,6 +16,9 @@
         role="gridcell"
         [attr.aria-label]="cell.label"
       >
+        @if (cell.facing) {
+          <span class="hunter" [attr.data-facing]="cell.facing" aria-hidden="true"></span>
+        }
         @for (icon of cell.icons; track $index) {
           <span class="icon">{{ icon }}</span>
         }

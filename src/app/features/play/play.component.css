@@ -47,6 +47,47 @@
   box-shadow: inset 0 0 0 3px #c4a35a;
 }
 
+.hunter {
+  width: 68%;
+  aspect-ratio: 1;
+  background-image: url('../../../assets/exec-69c66644-31a9-420d-97d9-0ee122f7c0ef.png');
+  background-repeat: no-repeat;
+  background-size: 400% 400%;
+  image-rendering: pixelated;
+  animation: hunter-walk 0.8s steps(4, end) infinite;
+}
+
+.hunter[data-facing='N'] {
+  background-position-y: 0%;
+}
+
+.hunter[data-facing='S'] {
+  background-position-y: 33.3333%;
+}
+
+.hunter[data-facing='W'] {
+  background-position-y: 66.6667%;
+}
+
+.hunter[data-facing='E'] {
+  background-position-y: 100%;
+}
+
+@keyframes hunter-walk {
+  from {
+    background-position-x: 0%;
+  }
+  to {
+    background-position-x: 133.3333%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hunter {
+    animation: none;
+  }
+}
+
 .icon {
   font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 }
