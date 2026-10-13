@@ -1,7 +1,16 @@
-import { Component, ElementRef, inject, viewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameSessionService } from '../../core/game-session.service';
 import { Command } from '../../core/models/game.models';
+
+const KEY_COMMANDS: Record<string, Command> = {
+  ArrowUp: 'forward',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+  Enter: 'climb',
+  NumpadEnter: 'climb',
+  Space: 'shoot',
+};
 
 @Component({
   selector: 'app-play',
@@ -17,6 +26,19 @@ export class PlayComponent {
     if (!this.session.active()) {
       void this.router.navigateByUrl('/');
     }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    const command = KEY_COMMANDS[event.code];
+    if (!command || !this.session.playing()) {
+      return;
+    }
+    event.preventDefault();
+    if (event.repeat && (command === 'shoot' || command === 'climb')) {
+      return;
+    }
+    this.act(command);
   }
 
   act(command: Command): void {

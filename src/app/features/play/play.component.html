@@ -9,10 +9,7 @@
     @for (cell of session.cells(); track cell.id) {
       <div
         class="square"
-        [class.light]="cell.light"
-        [class.dark]="!cell.light"
         [class.here]="cell.here"
-        [class.visited]="cell.visited"
         role="gridcell"
         [attr.aria-label]="cell.label"
       >
@@ -26,10 +23,9 @@
     }
   </div>
 
+  <p class="controls">↑ avanzar · ← izquierda · → derecha · Enter salir · Espacio disparar</p>
+
   <div class="commands">
-    <button type="button" (click)="act('forward')" [disabled]="!session.playing()">Avanzar</button>
-    <button type="button" (click)="act('left')" [disabled]="!session.playing()">Izquierda</button>
-    <button type="button" (click)="act('right')" [disabled]="!session.playing()">Derecha</button>
     <button type="button" (click)="act('shoot')" [disabled]="!session.playing()">Disparar</button>
     <button type="button" (click)="act('climb')" [disabled]="!session.playing()">Salir</button>
   </div>

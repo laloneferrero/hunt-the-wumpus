@@ -7,7 +7,6 @@ export interface BoardCellView {
   id: string;
   row: number;
   col: number;
-  light: boolean;
   visited: boolean;
   here: boolean;
   facing: Direction | null;
@@ -42,7 +41,6 @@ export function buildBoardView(options: {
         id: visitKey(position),
         row,
         col,
-        light: (row + col) % 2 === 0,
         visited,
         here,
         facing: here ? options.facing : null,

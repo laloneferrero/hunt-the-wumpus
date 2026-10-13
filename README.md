@@ -18,7 +18,7 @@ npm start
 La aplicación queda en http://localhost:4200.
 
 1. En la primera pantalla elige el tamaño del tablero, el número de pozos y las flechas.
-2. En la segunda pantalla usa Avanzar, Izquierda, Derecha, Disparar y Salir. La caja de texto muestra lo que percibe el cazador.
+2. En la segunda pantalla mueve al cazador con las flechas (↑ avanzar, ← izquierda, → derecha). Enter sale de la cueva y la barra espaciadora dispara. Disparar y Salir siguen en pantalla. La caja de texto muestra lo que percibe el cazador.
 
 ## Tests
 
@@ -31,6 +31,10 @@ Equivalente:
 ```bash
 npx ng test --no-watch --browsers=ChromeHeadless
 ```
+
+## Para desarrolladores
+
+Cómo está partida la lógica, qué hace cada función y cómo viaja un comando desde el teclado hasta el registro: [docs/juego.md](docs/juego.md).
 
 ## Reglas
 

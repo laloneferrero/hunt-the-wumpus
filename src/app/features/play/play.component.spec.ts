@@ -39,11 +39,11 @@ describe('PlayComponent', () => {
     const fixture = TestBed.createComponent(PlayComponent);
     fixture.detectChanges();
 
-    clickButton(fixture.nativeElement, 'Avanzar');
-    clickButton(fixture.nativeElement, 'Izquierda');
-    clickButton(fixture.nativeElement, 'Derecha');
-    clickButton(fixture.nativeElement, 'Disparar');
-    clickButton(fixture.nativeElement, 'Salir');
+    press('ArrowUp');
+    press('ArrowLeft');
+    press('ArrowRight');
+    press('Space');
+    press('Enter');
     fixture.detectChanges();
 
     const log = logText(fixture.nativeElement);
@@ -72,14 +72,16 @@ describe('PlayComponent', () => {
     const fixture = TestBed.createComponent(PlayComponent);
     fixture.detectChanges();
 
-    clickButton(fixture.nativeElement, 'Avanzar');
+    press('ArrowUp');
     fixture.detectChanges();
 
     expect(logText(fixture.nativeElement)).toContain('Has muerto.');
-    expect(button(fixture.nativeElement, 'Avanzar').disabled).toBeTrue();
+    expect(button(fixture.nativeElement, 'Disparar').disabled).toBeTrue();
     expect(button(fixture.nativeElement, 'Salir').disabled).toBeTrue();
 
     const before = session.log();
+    press('ArrowUp');
+    press('Space');
     fixture.componentInstance.act('forward');
     fixture.detectChanges();
     expect(session.log()).toBe(before);
@@ -102,15 +104,15 @@ describe('PlayComponent', () => {
     const fixture = TestBed.createComponent(PlayComponent);
     fixture.detectChanges();
 
-    clickButton(fixture.nativeElement, 'Avanzar');
-    clickButton(fixture.nativeElement, 'Izquierda');
-    clickButton(fixture.nativeElement, 'Izquierda');
-    clickButton(fixture.nativeElement, 'Avanzar');
-    clickButton(fixture.nativeElement, 'Salir');
+    press('ArrowUp');
+    press('ArrowLeft');
+    press('ArrowLeft');
+    press('ArrowUp');
+    press('Enter');
     fixture.detectChanges();
 
     expect(logText(fixture.nativeElement)).toContain('Victoria en 5 acciones.');
-    expect(button(fixture.nativeElement, 'Avanzar').disabled).toBeTrue();
+    expect(button(fixture.nativeElement, 'Salir').disabled).toBeTrue();
     expect(session.hasGold()).toBeTrue();
     expect(session.status()).toBe('won');
   });
@@ -130,7 +132,7 @@ describe('PlayComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('.square').length).toBe(16);
     expect(fixture.nativeElement.querySelector('.hunter')?.getAttribute('data-facing')).toBe('E');
 
-    clickButton(fixture.nativeElement, 'Izquierda');
+    press('ArrowLeft');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.hunter')?.getAttribute('data-facing')).toBe('N');
   });
@@ -143,7 +145,7 @@ describe('PlayComponent', () => {
     });
 
     expect(boardText(fixture.nativeElement)).not.toContain('🕳️');
-    clickButton(fixture.nativeElement, 'Avanzar');
+    press('ArrowUp');
     fixture.detectChanges();
     expect(boardText(fixture.nativeElement)).toContain('🕳️');
   });
@@ -156,10 +158,31 @@ describe('PlayComponent', () => {
     });
 
     expect(boardText(fixture.nativeElement)).not.toContain('👽');
-    clickButton(fixture.nativeElement, 'Izquierda');
-    clickButton(fixture.nativeElement, 'Avanzar');
+    press('ArrowLeft');
+    press('ArrowUp');
     fixture.detectChanges();
     expect(boardText(fixture.nativeElement)).toContain('👽');
+  });
+
+  it('keeps shoot and climb on screen and ignores a held spacebar', () => {
+    const session = TestBed.inject(GameSessionService);
+    const fixture = startCave({
+      pits: [{ row: 3, col: 3 }],
+      wumpus: { row: 3, col: 2 },
+      gold: { row: 3, col: 1 },
+    });
+
+    expect(fixture.nativeElement.textContent).not.toContain('Avanzar');
+    clickButton(fixture.nativeElement, 'Disparar');
+    press('Space', true);
+    clickButton(fixture.nativeElement, 'Salir');
+    fixture.detectChanges();
+
+    const log = logText(fixture.nativeElement);
+    expect(log).toContain('> Disparar');
+    expect(log).toContain('> Salir');
+    expect(session.arrows()).toBe(0);
+    expect(session.actions()).toBe(1);
   });
 });
 
@@ -178,6 +201,13 @@ function startCave(layout: {
   const fixture = TestBed.createComponent(PlayComponent);
   fixture.detectChanges();
   return fixture;
+}
+
+function press(code: string, repeat = false): void {
+  const key = code === 'Space' ? ' ' : code;
+  document.dispatchEvent(
+    new KeyboardEvent('keydown', { key, code, repeat, bubbles: true, cancelable: true }),
+  );
 }
 
 function button(root: HTMLElement, label: string): HTMLButtonElement {
